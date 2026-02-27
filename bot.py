@@ -5,14 +5,13 @@ import threading
 import time
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
-# ----- Заглушка для порта (чтобы Railway думал, что всё ок) -----
 class SimpleHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         self.send_response(200)
         self.end_headers()
         self.wfile.write(b'Bot is running')
     def log_message(self, format, *args):
-        pass  # не выводим логи запросов
+        pass
 
 def run_webserver():
     port = int(os.environ.get('PORT', 8080))
@@ -20,11 +19,8 @@ def run_webserver():
     print(f"Заглушка запущена на порту {port}")
     server.serve_forever()
 
-# Запускаем сервер в отдельном потоке
 threading.Thread(target=run_webserver, daemon=True).start()
-# --------------------------------------------------------------
 
-# Токен из переменных окружения Railway
 TOKEN = os.environ.get('TELEGRAM_TOKEN')
 if not TOKEN:
     print("ОШИБКА: TELEGRAM_TOKEN не найден!")
@@ -32,7 +28,7 @@ if not TOKEN:
 
 bot = telebot.TeleBot(TOKEN)
 
-# Твои любовные записки
+# ===== ТВОИ ЗАПИСКИ =====
 messages = [
     "Я люблю тебя также сильно, как мы любим пить пиво",
     "Ты прекрасна, как автомат по всем предметам",
@@ -51,6 +47,7 @@ messages = [
     "Ты секси",
     "Я просто тебя очень сильно люблю"
 ]
+# =========================
 
 @bot.message_handler(commands=['start'])
 def start_message(message):
@@ -90,7 +87,6 @@ def echo_message(message):
 
 print("✅ Бот запущен и готов работать 24/7!")
 
-# Запуск бота с защитой от разрывов
 while True:
     try:
         bot.infinity_polling()
